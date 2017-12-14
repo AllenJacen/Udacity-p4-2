@@ -1,5 +1,6 @@
 var model={
   currentCar:null,
+  currentCarIndex:0,
   cats:[{
         name:'th',
         imgUrl:'./img/22252709_010df3379e_z.jpg',
@@ -21,7 +22,8 @@ var model={
         imgUrl:'./img/9648464288_2516b35537_z.jpg',
         count:0
         }
-    ]
+    ],
+  adminShow:false
 };
 
 var octopus = {
@@ -30,6 +32,7 @@ var octopus = {
         
         catListView.init();
         catView.init();
+        adminView.init();
     },
     getCurrentCat:function(){
         return model.currentCar;
@@ -44,7 +47,33 @@ var octopus = {
         model.currentCar.count++;
 
         catView.render();
-    }   
+    },
+    setCarIndex:function (i) {
+      model.currentCarIndex=i;
+    },
+    showAdmin:function (a) {
+        model.adminShow=true;
+        this.makedecide(a);
+    },
+    hidenAdmin:function (a) {
+        model.adminShow=false;
+        this.makedecide(a);
+    },
+    makedecide:function (a) {
+        if(model.adminShow == true){
+            a.style.display='block';
+        }else{
+            a.style.display='none';
+        }
+    },
+    reviseCatlist:function (a) {
+        model.cats[model.currentCarIndex].name=a[0];
+        model.cats[model.currentCarIndex].imgUrl=a[1];
+        model.cats[model.currentCarIndex].count=a[2];
+        model.currentCar=model.cats[model.currentCarIndex];
+        catListView.init();
+        catView.init();
+    }
 };
 
 var catView={
@@ -84,12 +113,13 @@ var catListView={
             oli=document.createElement('li');
             oli.innerHTML=cats[i].name;
 
-            oli.addEventListener('click',(function(a){
+            oli.addEventListener('click',(function(a,i){
                 return function(){
                     octopus.setCurrentCat(a);
+                    octopus.setCarIndex(i);
                     catView.render();
                 }
-            })(cats[i]))
+            })(cats[i],i))
 
             this.oCatList.appendChild(oli);
     
@@ -102,20 +132,35 @@ var catListView={
 
 var adminView={
     init:function () {
-
+        this.oMain=document.getElementById('admin-list');
+        this.oadmin=document.getElementById('admin');
+        this.oName=document.getElementById('admin-name');
+        this.oUrl=document.getElementById('admin-url');
+        this.oNum=document.getElementById('admin-num');
+        this.oCancel=document.getElementById('cancel');
+        this.oSave=document.getElementById('save');
+        this.render();
     },
     render:function () {
-
-    },
-    admin:function () {
-
-    },
-    cancel:function () {
-
-    },
-    save:function () {
-
+        octopus.hidenAdmin(this.oMain);
+        this.oadmin.addEventListener('click',()=>{
+            // console.log(this);
+            // console.log(this.oMain);
+            octopus.showAdmin(this.oMain);
+        });
+        this.oCancel.addEventListener('click',()=>{
+            octopus.hidenAdmin(this.oMain);
+        });
+        this.oSave.addEventListener('click',()=>{
+            var name=this.oName.value;
+            var url=this.oUrl.value;
+            var num=this.oNum.value;
+            var a=[name,url,num];
+            octopus.reviseCatlist(a);
+            octopus.hidenAdmin(this.oMain);
+        })
     }
+    //this指向还有待练习
 };
 
 octopus.init();
