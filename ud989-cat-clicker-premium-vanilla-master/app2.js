@@ -150,6 +150,9 @@ var adminView={
         });
         this.oCancel.addEventListener('click',()=>{
             octopus.hidenAdmin(this.oMain);
+            this.oName.value='';
+            this.oUrl.value='';
+            this.oNum.value='';
         });
         this.oSave.addEventListener('click',()=>{
             var name=this.oName.value;
@@ -157,6 +160,9 @@ var adminView={
             var num=this.oNum.value;
             var a=[name,url,num];
             octopus.reviseCatlist(a);
+            this.oName.value='';
+            this.oUrl.value='';
+            this.oNum.value='';
             octopus.hidenAdmin(this.oMain);
         })
     }
